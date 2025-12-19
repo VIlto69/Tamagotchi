@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mon Tamagochi</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    #stats { margin: 20px; font-size: 20px; }
+    button { padding: 10px 20px; margin: 5px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🐣 Mon Tamagochi : <span id="name"></span></h1>
+  <div id="stats">
+    Faim : <span id="hunger"></span> | Bonheur : <span id="happiness"></span>
+  </div>
+  <button onclick="feed()">Nourrir</button>
+  <button onclick="play()">Jouer</button>
+
+  <script>
+    const apiUrl = "http://localhost:5000";
+
+    async function updateState() {
+      const res = await fetch(`${apiUrl}/state`);
+      const pet = await res.json();
+      document.getElementById("name").innerText = pet.name;
+      document.getElementById("hunger").innerText = Math.round(pet.hunger);
+      document.getElementById("happiness").innerText = Math.round(pet.happiness);
+    }
+
+    async function feed() {
+      await fetch(`${apiUrl}/feed`);
+      updateState();
+    }
+
+    async function play() {
+      await fetch(`${apiUrl}/play`);
+      updateState();
+    }
+
+    // Mise à jour automatique toutes les 2 secondes
+    setInterval(updateState, 2000);
+    updateState();
+  </script>
+</body>
+</html>
