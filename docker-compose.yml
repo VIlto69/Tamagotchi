@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  tamagochi-api:
+    build: ./api
+    container_name: tamagochi
+    ports:
+      - "5000:5000"
