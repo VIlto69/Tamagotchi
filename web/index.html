@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon Tamagochi</title>
+  <title>Mon Tamagotchi</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin-top: 50px; }
     #stats { margin: 20px; font-size: 20px; }
@@ -18,7 +18,7 @@
   <button onclick="play()">Jouer</button>
 
   <script>
-    const apiUrl = "http://localhost:5000";
+    const apiUrl = "http://tamagochi-api:5000";
 
     async function updateState() {
       const res = await fetch(`${apiUrl}/state`);
