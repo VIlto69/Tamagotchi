@@ -1,9 +1,9 @@
+version: "3.8"
+
 services:
   tamagochi-api:
     build: ./api
-    container_name: tamagochi
-    ports:
-      - "5000:5000"
+    container_name: tamagochi-api
 
   tamagochi-web:
     build: ./web
@@ -12,6 +12,3 @@ services:
       - "80:80"
     depends_on:
       - tamagochi-api
-
-    volumes:               
-      - ./api/data:/app/data  

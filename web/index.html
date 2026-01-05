@@ -18,7 +18,7 @@
   <button onclick="play()">Jouer</button>
 
   <script>
-    const apiUrl = "http://tamagochi-api:5000";
+    const apiUrl = "/api";
 
     async function updateState() {
       const res = await fetch(`${apiUrl}/state`);
