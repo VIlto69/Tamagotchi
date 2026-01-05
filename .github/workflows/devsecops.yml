@@ -1,0 +1,32 @@
+name: Pipeline Securite Tamagotchi
+
+# 1. QUAND se lancer ?
+on: [push] # Dès que tu envoies du code sur GitHub
+
+jobs:
+  controle-technique:
+    runs-on: ubuntu-latest # Le robot utilise un ordinateur Linux
+    steps:
+      - name: Recupere le code
+        uses: actions/checkout@v3
+
+      - name: Prepare Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Installe les gardes du corps
+        run: |
+          pip install ruff bandit safety flask pytest
+
+      - name: 1. Scan du Code (SAST avec Bandit)
+        # Il cherche les erreurs de sécurité dans ton code Python
+        run: bandit -r ./api
+        
+      - name: 2. Scan des Librairies (SCA avec Safety)
+        # Il vérifie que tes outils (Flask) n'ont pas de virus
+        run: safety check || echo "Attention aux failles !"
+
+      - name: 3. Verifier la Qualité (Ruff)
+        # Il vérifie que ton code est bien rangé et lisible
+        run: ruff check ./api
