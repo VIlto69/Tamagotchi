@@ -1,0 +1,70 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f8ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  width: 350px;
+}
+
+.pet-image img {
+  width: 150px;
+  height: 150px;
+  transition: transform 0.3s;
+}
+
+.pet-image img.happy {
+  transform: scale(1.1);
+}
+
+.pet-image img.sad {
+  transform: scale(0.9);
+}
+
+.stats {
+  margin: 20px 0;
+}
+
+label {
+  font-weight: bold;
+}
+
+.progress {
+  width: 100%;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 20px;
+  margin: 5px 0 15px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 50%;
+  background: #4caf50;
+  transition: width 0.5s, background 0.5s;
+}
+
+.buttons button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #ffb347;
+  transition: background 0.3s;
+}
+
+.buttons button:hover {
+  background: #ffcc70;
+}

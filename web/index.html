@@ -2,45 +2,38 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon Tamagotchi</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-    #stats { margin: 20px; font-size: 20px; }
-    button { padding: 10px 20px; margin: 5px; font-size: 16px; }
-  </style>
+  <title>Mon Tamagochi</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🐣 Mon Tamagochi : <span id="name"></span></h1>
-  <div id="stats">
-    Faim : <span id="hunger"></span> | Bonheur : <span id="happiness"></span>
+  <div class="container">
+    <h1>🐣 <span id="name"></span></h1>
+    
+    <div class="pet-image">
+      <img id="pet-img" src="images/happy.png" alt="Tamagochi">
+    </div>
+
+    <div class="stats">
+      <div>
+        <label>Faim :</label>
+        <div class="progress">
+          <div id="hunger-bar" class="progress-fill"></div>
+        </div>
+      </div>
+      <div>
+        <label>Bonheur :</label>
+        <div class="progress">
+          <div id="happiness-bar" class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="feed()">🍎 Nourrir</button>
+      <button onclick="play()">🎾 Jouer</button>
+    </div>
   </div>
-  <button onclick="feed()">Nourrir</button>
-  <button onclick="play()">Jouer</button>
 
-  <script>
-    const apiUrl = "/api";
-
-    async function updateState() {
-      const res = await fetch(`${apiUrl}/state`);
-      const pet = await res.json();
-      document.getElementById("name").innerText = pet.name;
-      document.getElementById("hunger").innerText = Math.round(pet.hunger);
-      document.getElementById("happiness").innerText = Math.round(pet.happiness);
-    }
-
-    async function feed() {
-      await fetch(`${apiUrl}/feed`);
-      updateState();
-    }
-
-    async function play() {
-      await fetch(`${apiUrl}/play`);
-      updateState();
-    }
-
-    // Mise à jour automatique toutes les 2 secondes
-    setInterval(updateState, 2000);
-    updateState();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
