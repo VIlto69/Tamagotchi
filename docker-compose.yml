@@ -12,3 +12,6 @@ services:
       - "80:80"
     depends_on:
       - tamagochi-api
+
+    volumes:               
+      - ./api/data:/app/data  
