@@ -12,13 +12,19 @@ jobs:
         with:
           python-version: '3.9'
 
-      # --- QUALITÉ (Les 3 tests demandés) ---
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install ruff black pytest bandit safety
+
+      # --- QUALITÉ ---
       - name: Qualité 1 - Ruff (Linting)
-        run: pip install ruff && ruff check ./api
+        run: ruff check ./api
       - name: Qualité 2 - Black (Formatage)
-        run: pip install black && black --check ./api
+        run: black --check ./api
       - name: Qualité 3 - Pytest (Tests unitaires)
-        run: pip install pytest && pytest ./api/test_app.py
+        run: pytest ./api/test_app.py
 
       # --- SÉCURITÉ (Les 2 tests demandés) ---
       - name: Sécurité 1 - Bandit (SAST)
