@@ -1,8 +1,6 @@
 # Branche de développement - Projet Tamagotchi DevSecOps
 from flask import Flask, jsonify, request
 import time
-import json
-import os
 
 app = Flask(__name__)
 
