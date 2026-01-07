@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 DATA_FILE = "data/pet.json"
 
+
 def charger_pet():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r") as f:
@@ -19,11 +20,13 @@ def charger_pet():
         "last_update": time.time(),
     }
 
+
 def sauvegarder_pet(data):
     if not os.path.exists("data"):
         os.makedirs("data")
     with open(DATA_FILE, "w") as f:
         json.dump(data, f)
+
 
 def update_pet(pet):
     now = time.time()
@@ -33,15 +36,18 @@ def update_pet(pet):
     pet["last_update"] = now
     return pet
 
+
 @app.route("/")
 def hello():
     return "API Tamagotchi opérationnelle !"
+
 
 @app.route("/state", methods=["GET"])
 def get_state():
     pet = update_pet(charger_pet())
     sauvegarder_pet(pet)
     return jsonify(pet)
+
 
 @app.route("/feed", methods=["POST", "GET"])
 def feed():
@@ -50,12 +56,14 @@ def feed():
     sauvegarder_pet(pet)
     return jsonify({"msg": "Nourri !", "pet": pet})
 
+
 @app.route("/play", methods=["POST", "GET"])
 def play():
     pet = update_pet(charger_pet())
     pet["happiness"] = min(pet["happiness"] + 20, 100)
     sauvegarder_pet(pet)
     return jsonify({"msg": "On joue !", "pet": pet})
+
 
 @app.route("/pet", methods=["PUT"])
 def update_manual():
@@ -65,6 +73,7 @@ def update_manual():
         pet["name"] = data["name"]
     sauvegarder_pet(pet)
     return jsonify(pet), 200
+
 
 @app.route("/pet", methods=["DELETE"])
 def delete_pet():
@@ -77,6 +86,7 @@ def delete_pet():
     }
     sauvegarder_pet(default_state)
     return jsonify({"msg": "Réinitialisé !", "pet": default_state}), 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)  # nosec
