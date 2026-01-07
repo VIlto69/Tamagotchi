@@ -1,5 +1,5 @@
 # Branche de développement - Projet Tamagotchi DevSecOps
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import time
 import json
 import os
@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 
 # --- CONFIGURATION DE LA PERSISTANCE ---
-# Ce fichier sera stocké dans le volume Docker
+# Ce fichier sera stocké dans le volume Docker pour ne pas perdre les données
 DATA_FILE = "data/pet.json"
 
 def charger_pet():
@@ -19,12 +19,12 @@ def charger_pet():
         "name": "Luna",
         "hunger": 50,
         "happiness": 50,
+        "energy": 100,
         "last_update": time.time()
     }
 
 def sauvegarder_pet(data):
     """Enregistre l'état actuel sur le disque dur (Volume)."""
-    # On s'assure que le dossier data existe
     if not os.path.exists("data"):
         os.makedirs("data")
     with open(DATA_FILE, "w") as f:
@@ -33,43 +33,75 @@ def sauvegarder_pet(data):
 def update_pet(pet):
     """Calcule l'évolution du Tamagotchi selon le temps écoulé."""
     now = time.time()
-    elapsed = now - pet["last_update"]
+    elapsed = now - pet.get("last_update", now)
 
+    # L'animal a faim et perd du bonheur avec le temps
     pet["hunger"] += elapsed * 0.1
     pet["happiness"] -= elapsed * 0.05
 
     # Limites de sécurité (0 à 100)
-    pet["hunger"] = min(pet["hunger"], 100)
-    pet["happiness"] = max(pet["happiness"], 0)
+    pet["hunger"] = max(0, min(pet["hunger"], 100))
+    pet["happiness"] = max(0, min(pet["happiness"], 100))
     pet["last_update"] = now
     return pet
 
-@app.route("/state")
+# --- ROUTES API (CRUD) ---
+
+@app.route("/")
+def hello():
+    return "API Tamagotchi opérationnelle avec Persistance !"
+
+@app.route("/state", methods=['GET'])
 def get_state():
+    """READ : Voir l'état de l'animal"""
     pet = charger_pet()
     pet = update_pet(pet)
     sauvegarder_pet(pet)
     return jsonify(pet)
 
-@app.route("/feed")
+@app.route("/feed", methods=['POST', 'GET'])
 def feed():
+    """UPDATE : Action de nourrir"""
     pet = charger_pet()
     pet = update_pet(pet)
     pet["hunger"] = max(pet["hunger"] - 20, 0)
     sauvegarder_pet(pet)
     return jsonify({"msg": "Nourri !", "pet": pet})
 
-@app.route("/play")
+@app.route("/play", methods=['POST', 'GET'])
 def play():
+    """UPDATE : Action de jouer"""
     pet = charger_pet()
     pet = update_pet(pet)
     pet["happiness"] = min(pet["happiness"] + 20, 100)
     sauvegarder_pet(pet)
     return jsonify({"msg": "On joue !", "pet": pet})
 
-@app.route("/")
-def hello():
-    return "API Tamagochi opérationnelle avec Persistance !"
+@app.route("/pet", methods=['PUT'])
+def update_manual():
+    """UPDATE (Manuel) : Modifier le nom ou les stats"""
+    data = request.get_json()
+    pet = charger_pet()
+    if not data:
+        return jsonify({"error": "Pas de données reçues"}), 400
+    if 'name' in data:
+        pet['name'] = data['name']
+    sauvegarder_pet(pet)
+    return jsonify(pet), 200
+
+@app.route("/pet", methods=['DELETE'])
+def delete_pet():
+    """DELETE : Réinitialiser le jeu (Exigence du sujet)"""
+    default_state = {
+        "name": "Luna",
+        "hunger": 50,
+        "happiness": 50,
+        "energy": 100,
+        "last_update": time.time()
+    }
+    sauvegarder_pet(default_state)
+    return jsonify({"msg": "Animal réinitialisé !", "pet": default_state}), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    # Le '# nosec' dit à Bandit d'ignorer l'alerte sur l'IP 0.0.0.0
+    app.run(host="0.0.0.0", port=5000)  # nosec
