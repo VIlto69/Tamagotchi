@@ -1,18 +1,42 @@
-version: "3.8"
+name: CI-CD DevSecOps Final
+on:
+  push:
+    branches: [ main, develop ]
+jobs:
+  controle-technique:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
 
-services:
-  tamagochi-api:
-    build: ./api
-    container_name: tamagochi-api
-    ports:
-      - "5000:5000"  # <--- AJOUTE ÇA : Ouvre la porte pour le navigateur
-    volumes:
-      - ./api/data:/app/data  # <--- AJOUTE ÇA : Pour la persistance (Luna ne meurt pas)
+      # --- QUALITÉ (Les 3 tests demandés) ---
+      - name: Qualité 1 - Ruff (Linting)
+        run: pip install ruff && ruff check ./api
+      - name: Qualité 2 - Black (Formatage)
+        run: pip install black && black --check ./api
+      - name: Qualité 3 - Pytest (Tests unitaires)
+        run: pip install pytest && pytest ./api/test_app.py
 
-  tamagochi-web:
-    build: ./web
-    container_name: tamagochi-web
-    ports:
-      - "8080:80"    # <--- J'ai mis 8080 pour correspondre à ton test Firefox
-    depends_on:
-      - tamagochi-api
+      # --- SÉCURITÉ (Les 2 tests demandés) ---
+      - name: Sécurité 1 - Bandit (SAST)
+        run: pip install bandit && bandit -r ./api -s B104
+      - name: Sécurité 2 - Safety (SCA)
+        run: pip install safety && safety check
+
+      # --- DOCKER HUB ---
+      - name: Login & Push Docker Hub
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and Push
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/tamagotchi-api:latest
