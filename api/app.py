@@ -1,3 +1,4 @@
+# Branche de développement - Projet Tamagotchi DevSecOps
 from flask import Flask, jsonify
 import time
 import json
