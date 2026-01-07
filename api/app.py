@@ -89,7 +89,7 @@ def update_manual():
     sauvegarder_pet(pet)
     return jsonify(pet), 200
 
-@app.route("/pet", methods=['DELETE'])
+@app.route("/pet", methods=['DELETE']) 
 def delete_pet():
     """DELETE : Réinitialiser le jeu (Exigence du sujet)"""
     default_state = {
@@ -102,6 +102,7 @@ def delete_pet():
     sauvegarder_pet(default_state)
     return jsonify({"msg": "Animal réinitialisé !", "pet": default_state}), 200
 
+if __name__ == "__main__":
 if __name__ == "__main__":
     # Le '# nosec' dit à Bandit d'ignorer l'alerte sur l'IP 0.0.0.0
     app.run(host="0.0.0.0", port=5000)  # nosec
