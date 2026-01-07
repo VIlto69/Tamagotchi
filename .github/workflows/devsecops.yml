@@ -1,56 +1,48 @@
-<<<<<<< HEAD
-name: Pipeline Securite Tamagotchi
-
-# 1. QUAND se lancer ?
-on: [push] # Dès que tu envoies du code sur GitHub
-
+name: CI-CD DevSecOps Final
+on:
+  push:
+    branches: [ main, develop ]
 jobs:
   controle-technique:
-    runs-on: ubuntu-latest # Le robot utilise un ordinateur Linux
+    runs-on: ubuntu-latest
     steps:
-      - name: Recupere le code
-        uses: actions/checkout@v3
-
-      - name: Prepare Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
-      - name: Installe les gardes du corps
+      - name: Install dependencies
         run: |
-          pip install ruff bandit safety flask pytest
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install ruff black pytest bandit safety
 
-      - name: 1. Scan du Code (SAST avec Bandit)
-        # Il cherche les erreurs de sécurité dans ton code Python
-        run: bandit -r ./api
-        
-      - name: 2. Scan des Librairies (SCA avec Safety)
-        # Il vérifie que tes outils (Flask) n'ont pas de virus
-        run: safety check || echo "Attention aux failles !"
-
-      - name: 3. Verifier la Qualité (Ruff)
-        # Il vérifie que ton code est bien rangé et lisible
+      # --- QUALITÉ ---
+      - name: Qualité 1 - Ruff (Linting)
         run: ruff check ./api
-=======
-name: Pipeline DevSecOps Tamagotchi
+      - name: Qualité 2 - Black (Formatage)
+        run: black --check ./api
+      - name: Qualité 3 - Pytest (Tests unitaires)
+        run: pytest ./api/test_app.py
 
-on: [push]
+      # --- SÉCURITÉ (Les 2 tests demandés) ---
+      - name: Sécurité 1 - Bandit (SAST)
+        run: pip install bandit && bandit -r ./api -s B104
+      - name: Sécurité 2 - Safety (SCA)
+        run: pip install safety && safety check
 
-jobs:
-  securite:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Installation
-        run: pip install bandit safety ruff flask
-
-      - name: 1. Scan Code (Bandit)
-        run: bandit -r ./api || true # Affiche les failles mais ne bloque pas
-        
-      - name: 2. Scan Librairies (Safety)
-        run: safety check || true
-
-      - name: 3. Qualité (Ruff)
-        run: ruff check ./api || true
->>>>>>> 5899ea69f9d72bdeea6a4a938a5ca33d59246032
+      # --- DOCKER HUB ---
+      - name: Login & Push Docker Hub
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and Push
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/tamagotchi-api:latest
