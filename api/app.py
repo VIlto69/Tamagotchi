@@ -101,6 +101,4 @@ def delete_pet():
     return jsonify({"msg": "Animal réinitialisé !", "pet": default_state}), 200
 
 if __name__ == "__main__":
-if __name__ == "__main__":
-    # Le '# nosec' dit à Bandit d'ignorer l'alerte sur l'IP 0.0.0.0
     app.run(host="0.0.0.0", port=5000)  # nosec
