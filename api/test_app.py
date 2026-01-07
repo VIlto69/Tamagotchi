@@ -1,4 +1,3 @@
-import pytest
 from app import app
 
 def test_api_is_alive():
