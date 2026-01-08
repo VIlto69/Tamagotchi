@@ -1,20 +1,23 @@
 from app import app
 
-
 def test_api_is_alive():
     """Vérifie que la page d'accueil répond bien et que les données sont correctes"""
-    client = app.test_client()
-    response = client.get("/")
+    with app.test_client() as client:
+        with app.app_context():
+            response = client.get("/")
 
-    # 1. Vérifie le code HTTP
-    assert response.status_code == 200, "La réponse HTTP doit être 200"
+            # Vérifie le code HTTP
+            assert response.status_code == 200
 
-    # 2. Vérifie que la réponse contient les champs attendus
-    data = response.get_json()
-    assert "name" in data, "La réponse doit contenir 'name'"
-    assert "hunger" in data, "La réponse doit contenir 'hunger'"
-    assert "happiness" in data, "La réponse doit contenir 'happiness'"
+            # Récupère le JSON
+            data = response.get_json()
+            assert data is not None, "La réponse JSON ne doit pas être None"
 
-    # 3. Vérifie que les valeurs sont dans la plage attendue
-    assert 0 <= data["hunger"] <= 100, "La faim doit être entre 0 et 100"
-    assert 0 <= data["happiness"] <= 100, "Le bonheur doit être entre 0 et 100"
+            # Vérifie les champs
+            assert "name" in data
+            assert "hunger" in data
+            assert "happiness" in data
+
+            # Vérifie les valeurs
+            assert 0 <= data["hunger"] <= 100
+            assert 0 <= data["happiness"] <= 100
