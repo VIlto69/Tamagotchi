@@ -1,5 +1,4 @@
 from app import app
-import json
 
 def test_api_is_alive():
     """Vérifie que la page d'accueil répond bien et que les données sont correctes"""
