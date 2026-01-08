@@ -72,4 +72,3 @@ jobs:
           context: ./api
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/tamagotchi-tamagochi-api:latest
-
