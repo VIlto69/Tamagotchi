@@ -1,7 +1,7 @@
 name: CI-CD DevSecOps Final
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
 jobs:
   controle-technique:
     runs-on: ubuntu-latest
