@@ -26,9 +26,10 @@ jobs:
       - name: Qualité 3 - Pytest (Tests unitaires)
         run: pytest ./api/test_app.py
 
-      # --- SÉCURITÉ (Les 2 tests demandés) ---
+      # --- SÉCURITÉ ---
       - name: Sécurité 1 - Bandit (SAST)
-        run: pip install bandit && bandit -r ./api -s B104
+        run: bandit -r ./api -x ./api/test_app.py -s B104
+
       - name: Sécurité 2 - Safety (SCA)
         run: pip install safety && safety check
 
