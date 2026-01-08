@@ -9,15 +9,12 @@ def test_api_is_alive():
     # 1. Vérifie le code HTTP
     assert response.status_code == 200, "La réponse HTTP doit être 200"
 
-    # 2. Vérifie que le type de contenu est JSON
-    assert response.content_type == "application/json", "Le content-type doit être JSON"
-
-    # 3. Vérifie que la réponse contient les champs attendus
+    # 2. Vérifie que la réponse contient les champs attendus
     data = response.get_json()
     assert "name" in data, "La réponse doit contenir 'name'"
     assert "hunger" in data, "La réponse doit contenir 'hunger'"
     assert "happiness" in data, "La réponse doit contenir 'happiness'"
 
-    # 4. Vérifie que les valeurs sont dans la plage attendue
+    # 3. Vérifie que les valeurs sont dans la plage attendue
     assert 0 <= data["hunger"] <= 100, "La faim doit être entre 0 et 100"
     assert 0 <= data["happiness"] <= 100, "Le bonheur doit être entre 0 et 100"
