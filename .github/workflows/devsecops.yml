@@ -35,7 +35,7 @@ jobs:
 
       # --- BUILD DOCKER ---
       - name: Build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/tamagotchi-tamagochi-api
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/tamagotchi-tamagochi-api .
 
         
       - name: 4. Scan de l'image API avec Trivy
