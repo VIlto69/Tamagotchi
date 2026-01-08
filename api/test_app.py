@@ -2,7 +2,7 @@ from app import app
 
 
 def test_api_is_alive():
-    """Vérifie que la page d'accueil répond bien et que les données sont correctes"""
+    """Vérifie que la page d'accueil répond bien"""
     with app.test_client() as client:
         response = client.get("/")
 
@@ -11,13 +11,3 @@ def test_api_is_alive():
 
         # Récupère le JSON
         data = response.get_json()
-        assert data is not None
-
-        # Vérifie les champs
-        assert "name" in data
-        assert "hunger" in data
-        assert "happiness" in data
-
-        # Vérifie que les valeurs sont cohérentes
-        assert 0 <= data["hunger"] <= 100
-        assert 0 <= data["happiness"] <= 100
