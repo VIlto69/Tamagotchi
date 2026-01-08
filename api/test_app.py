@@ -8,6 +8,3 @@ def test_api_is_alive():
 
         # Vérifie le code HTTP
         assert response.status_code == 200
-
-        # Récupère le JSON
-        data = response.get_json()
