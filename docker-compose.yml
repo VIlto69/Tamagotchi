@@ -5,14 +5,14 @@ services:
     build: ./api
     container_name: tamagochi-api
     ports:
-      - "5000:5000"  # <--- AJOUTE ÇA : Ouvre la porte pour le navigateur
+      - "5000:5000"
     volumes:
-      - ./api/data:/app/data  # <--- AJOUTE ÇA : Pour la persistance (Luna ne meurt pas)
+      - ./api/data:/app/data 
 
   tamagochi-web:
     build: ./web
     container_name: tamagochi-web
     ports:
-      - "8080:80"    # <--- J'ai mis 8080 pour correspondre à ton test Firefox
+      - "8080:80"
     depends_on:
       - tamagochi-api
